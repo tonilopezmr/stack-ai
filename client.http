@@ -1,0 +1,80 @@
+### Create Library
+curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/json" -d '{
+  "id": 1,
+  "documents": [
+    {
+      "id": 1,
+      "chunks": [
+        {
+          "text": "Chunk 1 text",
+          "metadata": {"author": "Author 1", "date": "2024-01-01"}
+        },
+        {
+          "text": "Chunk 2 text",
+          "metadata": {"author": "Author 2", "date": "2024-01-02"}
+        }
+      ],
+      "metadata": {"title": "Document 1", "category": "Category A"}
+    },
+    {
+      "id": 2,
+      "chunks": [
+        {
+          "text": "Chunk 3 text",
+          "metadata": {"author": "Author 3", "date": "2024-01-03"}
+        }
+      ],
+      "metadata": {"title": "Document 2", "category": "Category B"}
+    }
+  ],
+  "metadata": {"library_name": "Example Library", "location": "Location X"}
+}'
+
+### Read Library
+curl -X GET "http://localhost:8000/libraries/1"
+
+### Update Library
+curl -X PUT "http://localhost:8000/libraries/1" -H "Content-Type: application/json" -d '{
+  "id": 1,
+  "documents": [
+    {
+      "id": 1,
+      "chunks": [
+        {
+          "text": "Chunk 1 text",
+          "metadata": {"author": "Author 1", "date": "2024-01-01"}
+        },
+        {
+          "text": "Chunk 2 text",
+          "metadata": {"author": "Author 2", "date": "2024-01-02"}
+        }
+      ],
+      "metadata": {"title": "Document 1", "category": "Category A"}
+    }    
+  ],
+  "metadata": {"library_name": "Updated library", "location": "Location X"}
+}'
+
+
+### Delete Library
+curl -X DELETE "http://localhost:8000/libraries/1"
+
+### Create Chunk
+curl -X POST "http://localhost:8000/libraries/1/documents/1/chunks" -H "Content-Type: application/json" -d '{
+  "id": 3,
+  "text": "New chunk text",
+  "metadata": {"author": "New Author", "date": "2024-01-04"}
+}'
+
+### Read Chunk
+curl -X GET "http://localhost:8000/libraries/1/documents/1/chunks/3"
+
+### Update Chunk
+curl -X PUT "http://localhost:8000/libraries/1/documents/1/chunks/3" -H "Content-Type: application/json" -d '{
+  "id": 3,
+  "text": "Updated chunk text",
+  "metadata": {"author": "Updated Author", "date": "2024-01-05"}
+}'
+
+### Delete Chunk
+curl -X DELETE "http://localhost:8000/libraries/1/documents/1/chunks/3"

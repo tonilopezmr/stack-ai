@@ -4,7 +4,7 @@ from pydantic import BaseModel
 class Chunk(BaseModel):
     id: Optional[int] = None
     text: str
-    embedding: Optional[List[float]]
+    embedding: Optional[List[float]] = None
     metadata: Dict[str, str]
 
 class Document(BaseModel):
