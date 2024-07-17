@@ -1,6 +1,6 @@
-import threading
 from app.models import Library
 from app.storage import LibraryDataSource
+from fastapi import HTTPException
 
 class LibraryService:
     def __init__(self, library_datasource: LibraryDataSource):

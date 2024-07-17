@@ -30,8 +30,30 @@ curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/js
   "metadata": {"library_name": "Example Library", "location": "Location X"}
 }'
 
+### Create Library with a single document and without metadata
+curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/json" -d '{
+  "documents": [
+    {
+      "chunks": [
+        {
+          "text": "Chunk 1 text",
+          "metadata": {"author": "Author 1", "date": "2024-01-01"}
+        }
+      ]
+    }
+  ]
+}'
+
+### Create Library with without documents
+curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/json" -d '{
+  "documents": []
+}'
+
 ### Read Library
 curl -X GET "http://localhost:8000/libraries/1"
+
+### Read Library that doesn't exist
+curl -X GET "http://localhost:8000/libraries/100"
 
 ### Update Library
 curl -X PUT "http://localhost:8000/libraries/1" -H "Content-Type: application/json" -d '{
