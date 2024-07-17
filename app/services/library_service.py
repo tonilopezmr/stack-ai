@@ -1,28 +1,19 @@
 import threading
 from app.models import Library
+from app.storage import LibraryDataSource
 
 class LibraryService:
-    def __init__(self):
-        self.libraries = {}
-        self.lock = threading.Lock()
+    def __init__(self, library_datasource: LibraryDataSource):
+        self.libraries = library_datasource
 
-    def create_library(self, library: Library):
-        with self.lock:
-            self.libraries[library.id] = library
-        
-        return library
+    def create(self, library: Library):
+        return self.libraries.add(library)
 
-    def read_library(self, library_id: int):
-        with self.lock:
-            return self.libraries.get(library_id)
+    def read(self, library_id: int):
+        return self.libraries.get(library_id)
 
-    def update_library(self, library_id: int, library: Library):
-        with self.lock:
-            self.libraries[library_id] = library
-            return library
+    def update(self, library_id: int, library: Library):
+        return self.libraries.update(library_id, library)
 
-    def delete_library(self, library_id: int):
-        with self.lock:
-            library = self.libraries[library_id]
-            del self.libraries[library_id]
-            return library
+    def delete(self, library_id: int):
+        return self.libraries.remove(library_id)

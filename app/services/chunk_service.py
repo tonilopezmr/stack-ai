@@ -1,26 +1,18 @@
 from app.models import Chunk, Document, Library
-from . import LibraryService
+from app.storage import ChunkDataSource
 
 class ChunkService:
-    def __init__(self, library_service: LibraryService):
-        self.libraries = library_service
+    def __init__(self, chunk_datasource: ChunkDataSource):
+        self.chunks = chunk_datasource
 
-    def add_chunk(self, library_id: int, document_id: int, chunk: Chunk):
-        library = self.libraries.read_library(library_id)
-    
-        if library:
-            for doc in library.documents:
-                if doc.id == document_id:
-                    doc.chunks.append(chunk)
-                    return chunk
-        
-        return None
+    def create(self, library_id: int, document_id: int, chunk: Chunk):
+        return self.chunks.add(library_id, document_id, chunk)
 
-    def read_chunk(self, library_id: int, document_id: int, chunk_id: int):
-        library = self.libraries.read_library(library_id)
-        if library:
-            for doc in library.documents:
-                if doc.id == document_id:
-                    for chunk in doc.chunks:
-                        if chunk.id == chunk_id:
-                            return chunk
+    def read(self, library_id: int, document_id: int, chunk_id: int):
+        return self.chunks.get(library_id, document_id, chunk_id)
+
+    def update(self, library_id: int, document_id: int, chunk_id: int, chunk: Chunk):
+        return self.chunks.update(library_id, document_id, chunk_id, chunk)
+
+    def delete(self, library_id: int, document_id: int, chunk_id: int):
+        return self.chunks.remove(library_id, document_id, chunk_id)
