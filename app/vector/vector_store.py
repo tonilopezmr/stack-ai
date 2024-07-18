@@ -1,6 +1,5 @@
 import numpy as np
 from abc import ABC, abstractmethod
-from app.models import StackAIError
 
 class VectorStore(ABC):   
     def __init__(self):
@@ -59,6 +58,7 @@ class VectorStore(ABC):
         """
         pass
     
+    @abstractmethod
     def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine'):
         """
         Find vectors similar to the query vector in the specified vector store.
@@ -85,22 +85,7 @@ class VectorStore(ABC):
         :param space: The space in which to calculate similarity ('cosine' or 'l2', default is 'cosine').
         :return: A list of tuples containing the vector_id and similarity score of the most similar vectors.
         """
-        if store_id in self.vector_stores:
-            vector_data = self.vector_stores[store_id]['vector_data']
-            metadata = self.vector_stores[store_id]['metadata']
-            similarities = []
-
-            for vector_id, vector in vector_data.items():
-                if len(query_vector) != len(vector):
-                    raise StackAIError("Query vector length does not match the length of the chunk embeddings.", error_code=400)
-                
-                if metadata_filter:
-                    if not self._metadata_matches(metadata[vector_id], metadata_filter):
-                        continue
-                similarity = self._calculate_similarity(query_vector, vector, space)
-                similarities.append((vector_id, similarity))
-            similarities.sort(key=lambda x: x[1], reverse=True)
-            return similarities[:num_results]    
+        pass
 
     def _value_matches(self, metadata_value, filter_value) -> bool:
         if isinstance(filter_value, (str, int, float)):
