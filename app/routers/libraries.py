@@ -13,11 +13,6 @@ def create_library(library: Library):
 def read_library(library_id: int):
     return  library_service.read(library_id)
     
-@router.put("/libraries/{library_id}")
-def update_library(library_id: int, library: Library):
-    updated_library = library_service.update(library_id, library)
-    return updated_library
-
 @router.delete("/libraries/{library_id}")
 def delete_library(library_id: int):
     library_service.delete(library_id)

@@ -6,12 +6,16 @@ curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/js
       "id": 1,
       "chunks": [
         {
+          "id": 1,
           "text": "Chunk 1 text",
-          "metadata": {"author": "Author 1", "date": "2024-01-01"}
+          "metadata": {"author": "Author 1", "date": "2024-01-01"},
+          "embedding": [0.1, 0.2, 0.3, 0.4, 0.5]
         },
         {
+          "id": 2,
           "text": "Chunk 2 text",
-          "metadata": {"author": "Author 2", "date": "2024-01-02"}
+          "metadata": {"author": "Author 2", "date": "2024-01-02"},
+          "embedding": [0.6, 0.7, 0.8, 0.9, 1.0]
         }
       ],
       "metadata": {"title": "Document 1", "category": "Category A"}
@@ -20,8 +24,10 @@ curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/js
       "id": 2,
       "chunks": [
         {
+          "id": 3,
           "text": "Chunk 3 text",
-          "metadata": {"author": "Author 3", "date": "2024-01-03"}
+          "metadata": {"author": "Author 3", "date": "2024-01-03"},
+          "embedding": [1.1, 1.2, 1.3, 1.4, 1.5]
         }
       ],
       "metadata": {"title": "Document 2", "category": "Category B"}
@@ -34,8 +40,10 @@ curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/js
 curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/json" -d '{
   "documents": [
     {
+      "id": 2,
       "chunks": [
         {
+          "id": 1,
           "text": "Chunk 1 text",
           "metadata": {"author": "Author 1", "date": "2024-01-01"}
         }
@@ -100,3 +108,25 @@ curl -X PUT "http://localhost:8000/libraries/1/documents/1/chunks/3" -H "Content
 
 ### Delete Chunk
 curl -X DELETE "http://localhost:8000/libraries/1/documents/1/chunks/3"
+
+### Search Vector Similarities with Metadata Filter
+curl -X POST "http://localhost:8000/libraries/1/search_vectors" -H "Content-Type: application/json" -d '{
+  "vector": [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0],
+  "num_results": 2,
+  "filter_metadata": {"author": "Author 1"}
+}'
+
+### Search Vector Similarities with New Vector
+curl -X POST "http://localhost:8000/libraries/1/search_vectors" -H "Content-Type: application/json" -d '{
+  "vector": [0.1, 0.2, 0.3, 0.4, 0.5],
+  "num_results": 2,
+  "filter_metadata": {"author": "Author 1"}
+}'
+
+### Search Vector Similarities with Metadata Filter Greater Than Specific Date
+curl -X POST "http://localhost:8000/libraries/1/search_vectors" -H "Content-Type: application/json" -d '{
+  "vector": [0.13, 0.23, 0.43, 0.43, 0.13],
+  "num_results": 2,
+  "filter_metadata": {"date": {"$gt": "2024-01-01"}}
+}'
+
