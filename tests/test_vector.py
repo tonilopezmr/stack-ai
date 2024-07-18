@@ -1,5 +1,5 @@
 import numpy as np  
-from app.vector import HNSWVectorStore, BruteForceVectorStore
+from app.vector import HNSWVectorStore, BruteForceVectorStore, LSHVectorStore
 
 def run_vector_store_test(vector_store):
     vector_store.add_vector_store("my_library")
@@ -52,10 +52,10 @@ def run_vector_store_test(vector_store):
         print("Sentence:", sentence)
         print("Vector:", vector)
 
-    print("\n\n")
-    print("Vector Store:", vector_store.vector_stores["my_library"]["vector_data"])
-    print("\n\n")
-    print("Vector Index:", vector_store.vector_stores["my_library"]["vector_index"])
+    #print("\n\n")
+    #print("Vector Store:", vector_store.vector_stores["my_library"]["vector_data"])
+    #print("\n\n")
+    #print("Vector Index:", vector_store.vector_stores["my_library"]["vector_index"])
 
     print("\n\n Similarity Search \n\n")
     # Similarity Search
@@ -84,9 +84,14 @@ def run_vector_store_test(vector_store):
 def test_hnsw_vector_store():
     vector_store = HNSWVectorStore()
     run_vector_store_test(vector_store)
-    vector_store.delete_vector_store("my_library")
+    vector_store.delete_vector_store("hnsw_library")
 
 def test_brute_force_vector_store():
     vector_store = BruteForceVectorStore()
     run_vector_store_test(vector_store)
-    vector_store.delete_vector_store("my_library")
+    vector_store.delete_vector_store("brute_force_library")
+
+def test_brute_force_vector_store():
+    vector_store = LSHVectorStore(input_dim=15)
+    run_vector_store_test(vector_store)
+    vector_store.delete_vector_store("lsh_library")
