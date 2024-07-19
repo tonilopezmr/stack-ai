@@ -44,6 +44,10 @@ def get_dummy_library():
 
     return dummy_library
 
+def setup_function(function):
+    library = get_dummy_library()
+    delete_library(library.id)
+
 def test_create_library():
     library = get_dummy_library()
     

@@ -17,5 +17,5 @@ class ChunkDataSource(ABC):
         pass
 
     @abstractmethod
-    def update(self, chunk_id: int, chunk: Chunk) -> Optional[Chunk]:
+    def update(self, chunk: Chunk) -> Optional[Chunk]:
         pass

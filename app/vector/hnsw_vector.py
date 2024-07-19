@@ -2,15 +2,14 @@ from heapq import heapify, heappop, heappush, heapreplace, nlargest, nsmallest
 from math import log2
 from operator import itemgetter
 from random import random
-
+from app.models import StackAIError
 import numpy as np
 from app.vector.vector_store import VectorStore
 
 class HNSWVectorStore(VectorStore):
-    def __init__(self, space='cosine', dim=128, m=5, ef=200, m0=None, heuristic=True, vectorized=False):
+    def __init__(self, space='cosine', m=5, ef=200, m0=None, heuristic=True, vectorized=False):
         super().__init__()
         self.space = space
-        self.dim = dim
         self._m = m
         self._ef = ef
         self._m0 = 2 * m if m0 is None else m0
@@ -116,6 +115,9 @@ class HNSWVectorStore(VectorStore):
         if enter_point is None:
             raise ValueError("Empty graph")
 
+        if len(query_vector) != len(data[0]):
+            raise StackAIError("Query vector length does not match the length of the chunk embeddings.", error_code=400)
+
         dist = self.distance(query_vector, data[enter_point])
         
         # look for the closest neighbor from the top to the 2nd level
@@ -125,13 +127,12 @@ class HNSWVectorStore(VectorStore):
         # look for ef neighbors in the bottom level
         ep = self._search_graph(query_vector, [(-dist, enter_point)], graphs[0], self._ef, data)        
 
-        if metadata_filter:
-            ep = [(idx, md) for md, idx in ep if self._metadata_matches(metadata[idx], metadata_filter)]
-
+        if metadata_filter:            
+            ep = [(md, idx) for md, idx in ep if self._metadata_matches(metadata[vector_ids_aux[idx]], metadata_filter)]                        
+        
         ep.sort()
         ep = ep[:num_results]
         return [(vector_ids_aux[idx], -md) for md, idx in ep]
-    
 
     def _search_graph_ef1(self, q, entry, dist, layer, data):
         vectorized_distance = self.vectorized_distance

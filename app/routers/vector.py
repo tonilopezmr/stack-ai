@@ -14,5 +14,9 @@ def search_vector_similarities(library_id: int, query: QueryVector):
             raise StackAIError("Library not found", error_code=404)
     
         return similar_vectors
+    except StackAIError as e:
+        raise HTTPException(status_code=e.error_code, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=e.error_code, detail=str(e))    
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
