@@ -1,6 +1,7 @@
-from app.vector.vector_store import VectorStore
-from app.models import StackAIError
 import numpy as np
+from collections import defaultdict
+from app.models import StackAIError
+from app.vector.vector_store import VectorStore
 
 class LSHVectorStore(VectorStore):
     def __init__(self, num_hash_tables=5, hash_size=10, input_dim=128):
@@ -8,7 +9,7 @@ class LSHVectorStore(VectorStore):
         self.num_hash_tables = num_hash_tables
         self.hash_size = hash_size
         self.input_dim = input_dim
-        self.hash_tables = [{} for _ in range(num_hash_tables)]
+        self.hash_tables = [{} for _ in range(num_hash_tables)]        
         self.random_vectors = [np.random.randn(hash_size, input_dim) for _ in range(num_hash_tables)]
 
     def _hash_vector(self, vector, random_vectors):
@@ -41,9 +42,8 @@ class LSHVectorStore(VectorStore):
                 self.hash_tables[i][(store_id, hash_key)].append(vector_id)
 
     def update_vector(self, store_id: int, vector_id: int, new_vector: list[float], metadata: dict = None):
-        if store_id in self.vector_stores and vector_id in self.vector_stores[store_id]['vector_data']:
-            self.delete_vector(store_id, vector_id)
-            self.add_vector(store_id, vector_id, new_vector, metadata)
+        self.delete_vector(store_id, vector_id)
+        self.add_vector(store_id, vector_id, new_vector, metadata)
 
     def get_vector(self, store_id: int, vector_id: int):
         if store_id in self.vector_stores:
@@ -51,11 +51,12 @@ class LSHVectorStore(VectorStore):
 
     def delete_vector(self, store_id: int, vector_id: int):
         if store_id in self.vector_stores and vector_id in self.vector_stores[store_id]['vector_data']:
+            vector = self.vector_stores[store_id]['vector_data'][vector_id]
             del self.vector_stores[store_id]['vector_data'][vector_id]
             if vector_id in self.vector_stores[store_id]['metadata']:
                 del self.vector_stores[store_id]['metadata'][vector_id]
             for i, random_vectors in enumerate(self.random_vectors):
-                hash_key = self._hash_vector(self.vector_stores[store_id]['vector_data'][vector_id], random_vectors)
+                hash_key = self._hash_vector(vector, random_vectors)
                 if (store_id, hash_key) in self.hash_tables[i]:
                     self.hash_tables[i][(store_id, hash_key)].remove(vector_id)
                     if not self.hash_tables[i][(store_id, hash_key)]:
@@ -66,8 +67,8 @@ class LSHVectorStore(VectorStore):
             return []
 
         candidate_vectors = set()
-        for i, random_vectors in enumerate(self.random_vectors):
-            hash_key = self._hash_vector(query_vector, random_vectors)
+        for i, random_vectors in enumerate(self.random_vectors):            
+            hash_key = self._hash_vector(query_vector, random_vectors)            
             if (store_id, hash_key) in self.hash_tables[i]:
                 candidate_vectors.update(self.hash_tables[i][(store_id, hash_key)])
 
@@ -83,11 +84,11 @@ class LSHVectorStore(VectorStore):
             if len(query_vector) != len(vector):
                 raise StackAIError("Query vector length does not match the length of the chunk embeddings.", error_code=400)
 
-            if metadata_filter:
-                if not self._metadata_matches(metadata[vector_id], metadata_filter):
-                    continue
+            if metadata_filter and self._metadata_matches(metadata[vector_id], metadata_filter):
+                continue
+
             similarity = self._calculate_similarity(query_vector, vector, space)
             similarities.append((vector_id, similarity))
 
-        similarities.sort(key=lambda x: x[1], reverse=True)
+        similarities.sort(key=lambda x: x[1], reverse=(space == 'cosine'))
         return similarities[:num_results]

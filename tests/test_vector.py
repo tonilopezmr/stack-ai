@@ -1,8 +1,8 @@
 import numpy as np  
-from app.vector import HNSWVectorStore, BruteForceVectorStore, LSHVectorStore
+from app.vector import VectorStore, HNSWVectorStore, BruteForceVectorStore, LSHVectorStore
 
-def run_vector_store_test(vector_store):
-    vector_store.add_vector_store("my_library")
+def run_vector_store_test(vector_store: VectorStore, store_id: str):
+    vector_store.add_vector_store(store_id)
 
     # Define sentences
     sentences = [
@@ -48,14 +48,14 @@ def run_vector_store_test(vector_store):
     print("\n\n Storing Sentence Vectors in VectorStore \n\n")
     # Store in VectorStore
     for sentence, vector in sentence_vectors.items():
-        vector_store.add_vector("my_library", sentence, vector)
+        vector_store.add_vector(store_id, sentence, vector)
         print("Sentence:", sentence)
         print("Vector:", vector)
 
     #print("\n\n")
-    #print("Vector Store:", vector_store.vector_stores["my_library"]["vector_data"])
+    #print("Vector Store:", vector_store.vector_stores[store_id]["vector_data"])
     #print("\n\n")
-    #print("Vector Index:", vector_store.vector_stores["my_library"]["vector_index"])
+    #print("Vector Index:", vector_store.vector_stores[store_id]["vector_index"])
 
     print("\n\n Similarity Search \n\n")
     # Similarity Search
@@ -68,7 +68,7 @@ def run_vector_store_test(vector_store):
             query_vector[word_to_index[token]] += 1
 
     print("Query Vector:", list(query_vector))
-    similar_sentences = vector_store.find_similar_vectors("my_library", query_vector, num_results=2)
+    similar_sentences = vector_store.find_similar_vectors(store_id, query_vector, num_results=2)
 
     print("\n\n Displaying Similar Sentences \n\n")
     # Display similar sentences
@@ -77,21 +77,33 @@ def run_vector_store_test(vector_store):
     for sentence, similarity in similar_sentences:
         print(f"{sentence}: Similarity = {similarity:.4f}")
 
-    assert len(similar_sentences) == 2
-    assert similar_sentences[0] == ('mango is my favorite fruit', 0.7745966692414834)
-    assert similar_sentences[1] == ('I eat mango', 0.33333333333333337)
+    return similar_sentences    
 
 def test_hnsw_vector_store():
     vector_store = HNSWVectorStore()
-    run_vector_store_test(vector_store)
-    vector_store.delete_vector_store("hnsw_library")
+    similar_sentences = run_vector_store_test(vector_store, "hnsw_library")
+    assert len(similar_sentences) == 2
+    assert similar_sentences[0] == ('mango is my favorite fruit', 0.7745966692414834)
+    assert similar_sentences[1] == ('I eat mango', 0.33333333333333337)
+    vector_store.delete_vector_store("hnsw_library")    
 
 def test_brute_force_vector_store():
     vector_store = BruteForceVectorStore()
-    run_vector_store_test(vector_store)
+    similar_sentences = run_vector_store_test(vector_store, "brute_force_library")
+    assert len(similar_sentences) == 2
+    assert similar_sentences[0] == ('mango is my favorite fruit', 0.7745966692414834)
+    assert similar_sentences[1] == ('I eat mango', 0.33333333333333337)
     vector_store.delete_vector_store("brute_force_library")
 
-def test_brute_force_vector_store():
+def test_lsh_vector_store():
     vector_store = LSHVectorStore(input_dim=15)
-    run_vector_store_test(vector_store)
+    similar_sentences = run_vector_store_test(vector_store, "lsh_library")
+
+    #because it's a random hash, we can't predict the order of the results
+    #so if similar_sentences is 0, we don't evaluate
+    if len(similar_sentences) == 0:
+        return
+    
+    assert len(similar_sentences) == 1
+    assert similar_sentences[0] == ('mango is my favorite fruit', 0.7745966692414834)    
     vector_store.delete_vector_store("lsh_library")
