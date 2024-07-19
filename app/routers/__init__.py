@@ -6,7 +6,7 @@ from app.storage.sql_datasource.config import initialize_postgresql
 
 POSTGRESS_DATASOURCE_OPTION = 'postgress'
 IN_MEMORY_DATASOURCE_OPTION = 'in-memory'
-DATASOURCE = os.getenv('DATASOURCE', POSTGRESS_DATASOURCE_OPTION)  # Default to 'in-memory' if not set, options: postgress or in-memory
+DATASOURCE = os.getenv('DATASOURCE', IN_MEMORY_DATASOURCE_OPTION)  # Default to 'in-memory' if not set, options: postgress or in-memory
 
 library_datasource = None
 chunk_datasource = None
