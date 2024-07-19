@@ -45,7 +45,10 @@ class BruteForceVectorStore(VectorStore):
                     vector_index[existing_id] = {}
                 vector_index[existing_id][vector_id] = similarity
     
-    def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine'):
+    def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine')-> list[float]:
+        if store_id not in self.vector_stores:
+            return None
+
         if store_id in self.vector_stores:
             vector_data = self.vector_stores[store_id]['vector_data']
             metadata = self.vector_stores[store_id]['metadata']
