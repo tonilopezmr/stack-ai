@@ -2,6 +2,7 @@ from app.models import Chunk
 from app.storage import ChunkDataSource
 from app.vector import VectorStore
 
+
 class ChunkService:
     def __init__(self, chunk_datasource: ChunkDataSource, vector_store: VectorStore):
         self.chunks = chunk_datasource

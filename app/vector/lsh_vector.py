@@ -1,5 +1,4 @@
 import numpy as np
-from collections import defaultdict
 from app.models import StackAIError
 from app.vector.vector_store import VectorStore
 
@@ -62,9 +61,9 @@ class LSHVectorStore(VectorStore):
                     if not self.hash_tables[i][(store_id, hash_key)]:
                         del self.hash_tables[i][(store_id, hash_key)]
 
-    def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine'):
+    def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine') -> list[float]:
         if store_id not in self.vector_stores:
-            return []
+            return None
 
         candidate_vectors = set()
         for i, random_vectors in enumerate(self.random_vectors):            

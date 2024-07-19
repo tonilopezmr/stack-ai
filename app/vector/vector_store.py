@@ -1,5 +1,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
+from app.models import Document, Library
 
 class VectorStore(ABC):   
     def __init__(self):
@@ -13,6 +14,16 @@ class VectorStore(ABC):
         :param store_id: Unique identifier for the vector store.
         """
         pass
+
+    @abstractmethod
+    def vector_store_exists(self, store_id: int) -> bool:
+        """
+        Check if a vector store with the given store_id exists.
+        
+        :param store_id: Unique identifier for the vector store.
+        :return: True if the vector store exists, False otherwise.
+        """
+        return store_id in self.vector_stores    
 
     @abstractmethod
     def add_vector(self, store_id: int, vector_id: int, vector: list[float], metadata: dict = None):
@@ -59,7 +70,7 @@ class VectorStore(ABC):
         pass
     
     @abstractmethod
-    def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine'):
+    def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine') -> list[float]:
         """
         Find vectors similar to the query vector in the specified vector store.
 
@@ -118,3 +129,20 @@ class VectorStore(ABC):
             return -np.linalg.norm(np.array(vector1) - np.array(vector2))
         else:
             raise ValueError("Unsupported space type")
+
+    def _has_chunks(self, document: Document) -> bool:
+        return len(document.chunks) > 0
+    
+    def add_library_chunks_if_needed(self, library: Library):
+        """
+        Add vectors of a library document's chunks to the vector store.
+
+        Args:
+            library_id (int): The identifier of the library.
+            document (Document): The document containing chunks with vectors.
+        """
+        for document in library.documents:            
+            if self._has_chunks(document):
+                for chunk in document.chunks:
+                    self.add_vector(library.id, chunk.id, chunk.embedding, chunk.metadata)
+

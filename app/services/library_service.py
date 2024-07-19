@@ -15,8 +15,7 @@ class LibraryService:
         new_library = self.libraries.add(library)
         self.vector_store.add_vector_store(new_library.id)
 
-        for document in new_library.documents:
-            self.add_document_vectors_if_needed(new_library.id, document)
+        self.vector_store.add_library_chunks_if_needed(new_library)
             
         return new_library
 
@@ -25,18 +24,3 @@ class LibraryService:
 
     def delete(self, library_id: int):
         return self.libraries.remove(library_id)
-
-    def has_chunks(self, document: Document) -> bool:
-        return len(document.chunks) > 0
-
-    def add_document_vectors_if_needed(self, library_id: int, document: Document):
-        """
-        Add vectors of a document's chunks to the vector store.
-
-        Args:
-            library_id (int): The identifier of the library.
-            document (Document): The document containing chunks with vectors.
-        """
-        if self.has_chunks(document):
-            for chunk in document.chunks:
-                self.vector_store.add_vector(library_id, chunk.id, chunk.embedding, chunk.metadata)

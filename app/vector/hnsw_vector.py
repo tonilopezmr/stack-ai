@@ -16,7 +16,6 @@ class HNSWVectorStore(VectorStore):
         self._m0 = 2 * m if m0 is None else m0
         self._level_mult = 1 / log2(m)
         self._select = self._select_heuristic if heuristic else self._select_naive
-        
         self.distance_func = self._calculate_similarity
 
         if vectorized:
@@ -104,9 +103,9 @@ class HNSWVectorStore(VectorStore):
             graphs.append({idx: {}})
             self.vector_stores[store_id]['enter_point'] = idx
 
-    def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine'):
+    def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine') -> list[float]:
         if store_id not in self.vector_stores:
-            return []
+            return None
     
         metadata = self.vector_stores[store_id]['metadata']        
         data = self.vector_stores[store_id]['data']
