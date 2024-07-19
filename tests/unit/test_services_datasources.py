@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from app.services.chunk_service import ChunkService
 from app.services.library_service import LibraryService
 from app.services.vector_service import VectorService
-from app.models import Chunk, Library, QueryVector
+from app.models import Chunk, Library, QueryVector, Document
 
 @pytest.fixture
 def setup_services():
@@ -32,7 +32,8 @@ def test_chunk_service_create(setup_services):
 
 def test_library_service_create(setup_services):
     _, library_service, _, _, library_datasource, vector_store = setup_services
-    library = Library(id=1, documents=[], metadata={"name": "Test Library"})
+    document = Document(id=1, chunks=[], metadata={"title": "Test Document"})
+    library = Library(id=1, documents=[document], metadata={"name": "Test Library"})
     library_datasource.add.return_value = library
 
     result = library_service.create(library)
@@ -54,5 +55,6 @@ def test_vector_service_search_similar_sentences(setup_services):
 
     vector_store.vector_store_exists.assert_called_once_with(1)
     vector_store.find_similar_vectors.assert_called_once_with(1, query_vector.vector, query_vector.num_results, query_vector.filter_metadata)
-    chunk_datasource.get.assert_called_with(1, 1)
-    assert result == [("Test chunk", 0.9)]
+    
+    assert chunk_datasource.get.call_count == 2
+    assert result == [("Test chunk", 0.9), ("Test chunk", 0.8)]

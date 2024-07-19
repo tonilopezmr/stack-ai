@@ -1,5 +1,5 @@
 from app.models import Library
-from .library_datasource import LibraryDataSource
+from ..library_datasource import LibraryDataSource
 from typing import Optional
 
 import threading
@@ -25,7 +25,7 @@ class LibraryInMemoryDatasource(LibraryDataSource):
                 del self.library_storage[library_id]
                 return library
 
-    def update(self, library_id: int, library: Library) -> Library:
+    def update(self, library: Library) -> Library:
         with self.lock:
-            self.library_storage[library_id] = library
+            self.library_storage[library.id] = library
         return library

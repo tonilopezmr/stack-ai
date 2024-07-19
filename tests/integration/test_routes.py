@@ -1,6 +1,8 @@
 from app.routers.libraries import create_library, read_library, delete_library
 from app.routers.chunks import create_chunk, read_chunk
 from app.models import Chunk, Document, Library
+import pytest
+from fastapi import HTTPException
 
 def get_dummy_library():         
     chunk1 = Chunk(
@@ -44,6 +46,10 @@ def get_dummy_library():
 
     return dummy_library
 
+def setup_function(function):
+    library = get_dummy_library()
+    delete_library(library.id)
+
 def test_create_library():
     library = get_dummy_library()
     
@@ -67,8 +73,9 @@ def test_delete_library():
     
     delete_library(library.id)
     
-    result_library = read_library(library.id)
-    assert result_library is None
+    with pytest.raises(HTTPException) as excinfo:
+        read_library(library.id)
+    assert excinfo.value.status_code == 404
 
 def test_create_chunk():
     library = get_dummy_library()

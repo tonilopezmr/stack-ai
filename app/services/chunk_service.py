@@ -16,9 +16,9 @@ class ChunkService:
     def read(self, library_id: int, chunk_id: int):
         return self.chunks.get(library_id, chunk_id)
 
-    def update(self, library_id: int, chunk_id: int, chunk: Chunk):
-        updated_chunk = self.chunks.update(library_id, chunk_id, chunk)
-        self.vector_store.update_vector(library_id, chunk_id, chunk.embedding, chunk.metadata)
+    def update(self, library_id: int, chunk: Chunk):
+        updated_chunk = self.chunks.update(library_id, chunk)
+        self.vector_store.update_vector(library_id, chunk.id, chunk.embedding, chunk.metadata)
         return updated_chunk
 
     def delete(self, library_id: int, chunk_id: int):

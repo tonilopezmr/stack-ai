@@ -13,17 +13,7 @@ class VectorStore(ABC):
         
         :param store_id: Unique identifier for the vector store.
         """
-        pass
-
-    @abstractmethod
-    def vector_store_exists(self, store_id: int) -> bool:
-        """
-        Check if a vector store with the given store_id exists.
-        
-        :param store_id: Unique identifier for the vector store.
-        :return: True if the vector store exists, False otherwise.
-        """
-        return store_id in self.vector_stores    
+        pass    
 
     @abstractmethod
     def add_vector(self, store_id: int, vector_id: int, vector: list[float], metadata: dict = None):
@@ -98,6 +88,15 @@ class VectorStore(ABC):
         """
         pass
 
+    def vector_store_exists(self, store_id: int) -> bool:
+        """
+        Check if a vector store with the given store_id exists.
+        
+        :param store_id: Unique identifier for the vector store.
+        :return: True if the vector store exists, False otherwise.
+        """
+        return store_id in self.vector_stores    
+       
     def _value_matches(self, metadata_value, filter_value) -> bool:
         if isinstance(filter_value, (str, int, float)):
             return metadata_value == filter_value

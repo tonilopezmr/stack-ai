@@ -1,5 +1,8 @@
 
 from .library_datasource import LibraryDataSource
-from .library_in_memory import LibraryInMemoryDatasource
+from .in_memory_datasource.library_in_memory import LibraryInMemoryDatasource
 from .chunk_datasource import ChunkDataSource
-from .chunk_in_memory import ChunkInMemoryDatasource
+from .in_memory_datasource.chunk_in_memory import ChunkInMemoryDatasource
+from .sql_datasource.library_sql import LibraryPostgresDatasource
+from .sql_datasource.chunk_sql import ChunkPostgresDatasource
+from .sql_datasource.config import initialize_postgresql

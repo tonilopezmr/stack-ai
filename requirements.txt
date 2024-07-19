@@ -6,3 +6,4 @@ scipy
 pytest
 llama-index-llms-cohere
 llama-index-embeddings-cohere
+psycopg2-binary

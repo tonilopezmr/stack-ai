@@ -11,8 +11,12 @@ def create_library(library: Library):
 
 @router.get("/libraries/{library_id}")
 def read_library(library_id: int):
-    return  library_service.read(library_id)
+    library = library_service.read(library_id)
     
+    if not library:
+        raise HTTPException(status_code=404, detail="Library not found")
+    
+    return library
 @router.delete("/libraries/{library_id}")
 def delete_library(library_id: int):
     library_service.delete(library_id)

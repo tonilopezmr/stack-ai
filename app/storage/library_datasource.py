@@ -17,6 +17,6 @@ class LibraryDataSource(ABC):
         pass
 
     @abstractmethod
-    def update(self, library_id: int, library: Library) -> Library:
+    def update(self, library: Library) -> Library:
         pass
     

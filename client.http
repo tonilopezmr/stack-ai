@@ -60,7 +60,7 @@ curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/js
 }'
 
 ### Read Library
-curl -X GET "http://localhost:8000/libraries/1"
+curl -X GET "http://localhost:8000/libraries/13"
 
 ### Read Library that doesn't exist
 curl -X GET "http://localhost:8000/libraries/100"
@@ -89,7 +89,7 @@ curl -X PUT "http://localhost:8000/libraries/1" -H "Content-Type: application/js
 
 
 ### Delete Library
-curl -X DELETE "http://localhost:8000/libraries/1"
+curl -X DELETE "http://localhost:8000/libraries/100"
 
 ### Create Chunk
 curl -X POST "http://localhost:8000/libraries/1/documents/1/chunks" -H "Content-Type: application/json" -d '{
@@ -99,27 +99,27 @@ curl -X POST "http://localhost:8000/libraries/1/documents/1/chunks" -H "Content-
 }'
 
 ### Read Chunk
-curl -X GET "http://localhost:8000/libraries/1/documents/1/chunks/3"
+curl -X GET "http://localhost:8000/libraries/6/chunks/16"
 
 ### Update Chunk
-curl -X PUT "http://localhost:8000/libraries/1/documents/1/chunks/3" -H "Content-Type: application/json" -d '{
+curl -X PUT "http://localhost:8000/libraries/1/chunks/3" -H "Content-Type: application/json" -d '{
   "id": 3,
   "text": "Updated chunk text",
   "metadata": {"author": "Updated Author", "date": "2024-01-05"}
 }'
 
 ### Delete Chunk
-curl -X DELETE "http://localhost:8000/libraries/1/documents/1/chunks/3"
+curl -X DELETE "http://localhost:8000/libraries/1/chunks/3"
 
 ### Search Vector Similarities with Metadata Filter
-curl -X POST "http://localhost:8000/libraries/1/search_vectors" -H "Content-Type: application/json" -d '{
+curl -X POST "http://localhost:8000/libraries/15/search_vectors" -H "Content-Type: application/json" -d '{
   "vector": [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0],
   "num_results": 2,
   "filter_metadata": {"author": "Author 1"}
 }'
 
 ### Search Vector Similarities with New Vector
-curl -X POST "http://localhost:8000/libraries/1/search_vectors" -H "Content-Type: application/json" -d '{
+curl -X POST "http://localhost:8000/libraries/15/search_vectors" -H "Content-Type: application/json" -d '{
   "vector": [0.1, 0.2, 0.3, 0.4, 0.5],
   "num_results": 2,
   "filter_metadata": {"author": "Author 1"}

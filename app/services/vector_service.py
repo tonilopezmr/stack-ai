@@ -16,7 +16,7 @@ class VectorService:
             if not library:
                 return None
 
-            self.vector_store.add_vector_store(library)
+            self.vector_store.add_vector_store(library.id)
             self.vector_store.add_library_chunks_if_needed(library)            
 
         similar_vectors = self.vector_store.find_similar_vectors(library_id, query_vector.vector, query_vector.num_results, query_vector.filter_metadata)        
