@@ -1,5 +1,3 @@
-import pprint
-import sys
 from heapq import heapify, heappop, heappush, heapreplace, nlargest, nsmallest
 from math import log2
 from operator import itemgetter
@@ -7,7 +5,6 @@ from random import random
 
 import numpy as np
 from app.vector.vector_store import VectorStore
-from app.models import StackAIError
 
 class HNSWVectorStore(VectorStore):
     def __init__(self, space='cosine', dim=128, m=5, ef=200, m0=None, heuristic=True, vectorized=False):
