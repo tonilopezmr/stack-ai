@@ -4,9 +4,10 @@ from app.vector import BruteForceVectorStore, HNSWVectorStore
 import os
 from app.storage.sql_datasource.config import initialize_postgresql
 
-POSTGRESS_DATASOURCE_OPTION = 'postgress'
+POSTGRES_DATASOURCE_OPTION = 'postgres'
 IN_MEMORY_DATASOURCE_OPTION = 'in-memory'
-DATASOURCE = os.getenv('DATASOURCE', IN_MEMORY_DATASOURCE_OPTION)  # Default to 'in-memory' if not set, options: postgress or in-memory
+DATASOURCE = os.getenv('DATASOURCE', IN_MEMORY_DATASOURCE_OPTION)  # Default to 'in-memory' if not set, options: postgres or in-memory
+print("Datasource selected: ", DATASOURCE)
 
 library_datasource = None
 chunk_datasource = None
