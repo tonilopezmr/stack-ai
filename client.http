@@ -1,3 +1,5 @@
+# Make manual end-to-end tests for the API client
+
 ### Create Library
 curl -X POST "http://localhost:8000/libraries/" -H "Content-Type: application/json" -d '{
   "id": 1,
