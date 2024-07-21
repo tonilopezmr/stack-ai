@@ -1,6 +1,8 @@
 # Make manual end-to-end tests for the API client
 
-### Create Library
+### Library Operations
+
+#### Create Library
 curl -X POST "http://localhost:8080/libraries/" -H "Content-Type: application/json" -d '{
   "id": 1,
   "documents": [
@@ -38,7 +40,7 @@ curl -X POST "http://localhost:8080/libraries/" -H "Content-Type: application/js
   "metadata": {"library_name": "Example Library", "location": "Location X"}
 }'
 
-### Create Library with a single document and without metadata
+#### Create Library with a single document and without metadata
 curl -X POST "http://localhost:8080/libraries/" -H "Content-Type: application/json" -d '{
   "documents": [
     {
@@ -47,25 +49,26 @@ curl -X POST "http://localhost:8080/libraries/" -H "Content-Type: application/js
         {
           "id": 1,
           "text": "Chunk 1 text",
-          "metadata": {"author": "Author 1", "date": "2024-01-01"}
+          "metadata": {"author": "Author 1", "date": "2024-01-01"},
+          "embedding": [0.1, 0.2, 0.3, 0.4, 0.5]
         }
       ]
     }
   ]
 }'
 
-### Create Library with without documents
+#### Create Library without documents
 curl -X POST "http://localhost:8080/libraries/" -H "Content-Type: application/json" -d '{
   "documents": []
 }'
 
-### Read Library
+#### Read Library
 curl -X GET "http://localhost:8080/libraries/13"
 
-### Read Library that doesn't exist
+#### Read Library that doesn't exist
 curl -X GET "http://localhost:8080/libraries/100"
 
-### Update Library
+#### Update Library
 curl -X PUT "http://localhost:8080/libraries/1" -H "Content-Type: application/json" -d '{
   "id": 1,
   "documents": [
@@ -74,10 +77,12 @@ curl -X PUT "http://localhost:8080/libraries/1" -H "Content-Type: application/js
       "chunks": [
         {
           "text": "Chunk 1 text",
+          "embedding": [0.6, 0.7, 0.8, 0.9, 1.0],
           "metadata": {"author": "Author 1", "date": "2024-01-01"}
         },
         {
           "text": "Chunk 2 text",
+          "embedding": [1.1, 1.2, 1.3, 1.4, 1.5],
           "metadata": {"author": "Author 2", "date": "2024-01-02"}
         }
       ],
@@ -87,48 +92,101 @@ curl -X PUT "http://localhost:8080/libraries/1" -H "Content-Type: application/js
   "metadata": {"library_name": "Updated library", "location": "Location X"}
 }'
 
-
-### Delete Library
+#### Delete Library
 curl -X DELETE "http://localhost:8080/libraries/100"
 
-### Create Chunk
+### Document Operations
+
+#### Create Document
+curl -X POST "http://localhost:8080/libraries/28/documents" -H "Content-Type: application/json" -d '{
+  "id": 1,
+  "chunks": [
+    {
+      "id": 1,
+      "text": "Chunk 1 text",
+      "embedding": [0.6, 0.7, 0.8, 0.9, 1.0],
+      "metadata": {"author": "Author 1", "date": "2024-01-01"}
+    },
+    {
+      "id": 2,
+      "text": "Chunk 2 text",
+      "embedding": [1.1, 1.2, 1.3, 1.4, 1.5],
+      "metadata": {"author": "Author 2", "date": "2024-01-02"}
+    }
+  ],
+  "metadata": {"title": "Document 1", "category": "Category A"}
+}'
+
+#### Read Document
+curl -X GET "http://localhost:8080/libraries/28/documents/173"
+
+#### Update Document
+curl -X PUT "http://localhost:8080/libraries/1/documents/1" -H "Content-Type: application/json" -d '{
+  "id": 1,
+  "chunks": [
+    {
+      "id": 1,
+      "text": "Updated Chunk 1 text",
+      "metadata": {"author": "Updated Author 1", "date": "2024-01-01"},
+      "embedding": [0.1, 0.2, 0.3, 0.4, 0.5]
+    },
+    {
+      "id": 2,
+      "text": "Updated Chunk 2 text",
+      "metadata": {"author": "Updated Author 2", "date": "2024-01-02"},
+      "embedding": [0.6, 0.7, 0.8, 0.9, 1.0]
+    }
+  ],
+  "metadata": {"title": "Updated Document 1", "category": "Updated Category A"}
+}'
+
+#### Delete Document
+curl -X DELETE "http://localhost:8080/libraries/28/documents/175"
+
+
+### Chunk Operations
+
+#### Create Chunk
 curl -X POST "http://localhost:8080/libraries/1/documents/1/chunks" -H "Content-Type: application/json" -d '{
   "id": 3,
   "text": "New chunk text",
-  "metadata": {"author": "New Author", "date": "2024-01-04"}
+  "metadata": {"author": "New Author", "date": "2024-01-04"},
+  "embedding": [0.1, 0.2, 0.3, 0.4, 0.5]
 }'
 
-### Read Chunk
+#### Read Chunk
 curl -X GET "http://localhost:8080/libraries/6/chunks/16"
 
-### Update Chunk
+#### Update Chunk
 curl -X PUT "http://localhost:8080/libraries/1/chunks/3" -H "Content-Type: application/json" -d '{
   "id": 3,
   "text": "Updated chunk text",
-  "metadata": {"author": "Updated Author", "date": "2024-01-05"}
+  "metadata": {"author": "Updated Author", "date": "2024-01-05"},
+  "embedding": [0.6, 0.7, 0.8, 0.9, 1.0]
 }'
 
-### Delete Chunk
+#### Delete Chunk
 curl -X DELETE "http://localhost:8080/libraries/1/chunks/3"
 
-### Search Vector Similarities with Metadata Filter
+### Vector Search Operations
+
+#### Search Vector Similarities with Metadata Filter
 curl -X POST "http://localhost:8080/libraries/15/search_vectors" -H "Content-Type: application/json" -d '{
   "vector": [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0],
   "num_results": 2,
   "filter_metadata": {"author": "Author 1"}
 }'
 
-### Search Vector Similarities with New Vector
+#### Search Vector Similarities with New Vector
 curl -X POST "http://localhost:8080/libraries/15/search_vectors" -H "Content-Type: application/json" -d '{
   "vector": [0.1, 0.2, 0.3, 0.4, 0.5],
   "num_results": 2,
   "filter_metadata": {"author": "Author 1"}
 }'
 
-### Search Vector Similarities with Metadata Filter Greater Than Specific Date
+#### Search Vector Similarities with Metadata Filter Greater Than Specific Date
 curl -X POST "http://localhost:8080/libraries/1/search_vectors" -H "Content-Type: application/json" -d '{
   "vector": [0.13, 0.23, 0.43, 0.43, 0.13],
   "num_results": 2,
   "filter_metadata": {"date": {"$gt": "2024-01-01"}}
 }'
-

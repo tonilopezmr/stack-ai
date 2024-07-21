@@ -58,6 +58,16 @@ class VectorStore(ABC):
         :param store_id: Unique identifier for the vector store.
         """
         pass
+
+    @abstractmethod
+    def delete_vector(self, store_id: int, vector_id: int):
+        """
+        Delete a vector from the specified vector store.
+        
+        :param store_id: Unique identifier for the vector store.
+        :param vector_id: Unique identifier for the vector.
+        """
+        pass
     
     @abstractmethod
     def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine') -> list[float]:
@@ -144,4 +154,16 @@ class VectorStore(ABC):
             if self._has_chunks(document):
                 for chunk in document.chunks:
                     self.add_vector(library.id, chunk.id, chunk.embedding, chunk.metadata)
+    
+    def add_document_chunks_if_needed(self, library_id: int, document: Document):
+        """
+        Add vectors of a document's chunks to the vector store.
+
+        Args:
+            library_id (int): The identifier of the library.
+            document (Document): The document containing chunks with vectors.
+        """
+        if self._has_chunks(document):
+            for chunk in document.chunks:
+                self.add_vector(library_id, chunk.id, chunk.embedding, chunk.metadata)
 

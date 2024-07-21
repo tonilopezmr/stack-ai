@@ -6,7 +6,7 @@ def initialize_postgresql():
     # Create a connection pool
     connection_pool = pool.SimpleConnectionPool(
         1,  # Minimum number of connections
-        10, # Maximum number of connections
+        50, # Maximum number of connections
         dbname=os.getenv('POSTGRES_DB', 'stack_ai_database'),
         user=os.getenv('POSTGRES_USER', 'user1'),
         password=os.getenv('POSTGRES_PASSWORD', 'dbpassword'),

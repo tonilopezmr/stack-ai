@@ -8,12 +8,12 @@ class Chunk(BaseModel):
     id: Optional[int] = None
     text: str
     embedding: List[float]
-    metadata: Metadata
+    metadata: Optional[Metadata] = None
 
 class Document(BaseModel):
     id: Optional[int] = None
     chunks: List[Chunk]
-    metadata: Metadata
+    metadata: Optional[Metadata] = None
 
 class Library(BaseModel):
     id: Optional[int] = None

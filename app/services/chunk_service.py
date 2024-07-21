@@ -21,5 +21,7 @@ class ChunkService:
         self.vector_store.update_vector(library_id, chunk.id, chunk.embedding, chunk.metadata)
         return updated_chunk
 
-    def delete(self, library_id: int, chunk_id: int):
-        return self.chunks.remove(library_id, chunk_id)
+    def delete(self, library_id: int, chunk_id: int):        
+        deleted_vector = self.chunks.remove(library_id, chunk_id)
+        self.vector_store.delete_vector(library_id, chunk_id)
+        return deleted_vector

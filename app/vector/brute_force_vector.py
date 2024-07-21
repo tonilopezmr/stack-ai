@@ -45,6 +45,17 @@ class BruteForceVectorStore(VectorStore):
                     vector_index[existing_id] = {}
                 vector_index[existing_id][vector_id] = similarity
     
+    def delete_vector(self, store_id: int, vector_id: int):
+        if store_id in self.vector_stores and vector_id in self.vector_stores[store_id]['vector_data']:
+            del self.vector_stores[store_id]['vector_data'][vector_id]
+            if vector_id in self.vector_stores[store_id]['metadata']:
+                del self.vector_stores[store_id]['metadata'][vector_id]
+            if vector_id in self.vector_stores[store_id]['vector_index']:
+                del self.vector_stores[store_id]['vector_index'][vector_id]
+            for existing_id in self.vector_stores[store_id]['vector_index']:
+                if vector_id in self.vector_stores[store_id]['vector_index'][existing_id]:
+                    del self.vector_stores[store_id]['vector_index'][existing_id][vector_id]
+
     def find_similar_vectors(self, store_id: int, query_vector: list[float], num_results: int = 5, metadata_filter: dict = None, space: str = 'cosine')-> list[float]:
         if store_id not in self.vector_stores:
             return None

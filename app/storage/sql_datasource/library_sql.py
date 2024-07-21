@@ -102,11 +102,6 @@ class LibraryPostgresDatasource(LibraryDataSource):
                             (library.id, Json(document.metadata))
                         )
                         document.id = cursor.fetchone()[0]
-                    else:
-                        cursor.execute(
-                            "UPDATE documents SET metadata = %s WHERE id = %s AND library_id = %s",
-                            (Json(document.metadata), document.id, library.id)
-                        )
                                         
                     for chunk in document.chunks:
                         if chunk.id is None:
